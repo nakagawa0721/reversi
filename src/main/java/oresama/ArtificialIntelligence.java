@@ -18,7 +18,7 @@ public class ArtificialIntelligence {
 		System.out.println(s);
 	}
 
-	private static int NONE = 0, WHITE = 1, BLACK = 2;
+	private static int NONE = 0, WHITE = 2, BLACK = 1;
 
 	private static boolean validPoint(Point pt) {
 		return pt.x > -1 && pt.y > -1 && pt.x < 8 && pt.y < 8;
@@ -121,7 +121,7 @@ public class ArtificialIntelligence {
 		return false;
 	}
 
-	static boolean isPossible(boolean white, Point pt, int[][] board) {
+	public static boolean isPossible(boolean white, Point pt, int[][] board) {
 		if (board[pt.x][pt.y] != 0) {
 			return false;
 		}

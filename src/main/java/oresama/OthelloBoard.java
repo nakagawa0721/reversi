@@ -12,26 +12,36 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import lombok.val;
+import othello.Board;
 
 @SuppressWarnings("serial")
 public class OthelloBoard extends JFrame implements MouseListener {
 
-	static int NONE = 0, WHITE = 1, BLACK = 2;
+	static int NONE = 0, BLACK = 1, WHITE = 2;
 
-	private int board[][] = new int[8][8];
-
-	public static void main(String[] args) {
-		new OthelloBoard();
+	public int[][] getBoard() {
+		int board[][] = new int[8][8];
+		for(int x = 0; x < 8; ++x) {
+			for(int y = 0; y < 8; ++y) {
+				board[x][y] = Board.getCell(x, y).getStatus();
+			}
+		}
+		return board;
 	}
+	
+	private int turn = BLACK;
+
 	public OthelloBoard() {
 
 		// 盤面初期化
-		board[3][3] = board[4][4] = WHITE;
-		board[4][3] = board[3][4] = BLACK;
-
+		Board.getCell(3, 3).setStatus(BLACK);
+		Board.getCell(4, 4).setStatus(BLACK);
+		Board.getCell(4, 3).setStatus(WHITE);
+		Board.getCell(3, 4).setStatus(WHITE);
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(new ImageIcon("./icon.png").getImage());
-		setTitle("othe...REVERSI");
+		setTitle("REVERSI");
 		val insets = getInsets();
 		val width = 600 + insets.left + insets.right;
 		val height = 400 + insets.top + insets.bottom;
@@ -65,10 +75,10 @@ public class OthelloBoard extends JFrame implements MouseListener {
 
 		for (int y = 0; y < 8; ++y) {
 			for (int x = 0; x < 8; ++x) {
-				if (board[x][y] == NONE)
+				if (getBoard()[x][y] == NONE)
 					continue;
 				Color piece = new Color(200, 200, 200);
-				if (board[x][y] != WHITE)
+				if (getBoard()[x][y] != WHITE)
 					piece = Color.black;
 
 				int cx = 13 + x * 40;
@@ -90,8 +100,8 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		for(int y = 0; y < 8; ++y) {
 			for(int x = 0; x < 8; ++x) {
 				String s = " ";
-				if(board[x][y] == 1) s = "○";
-				if(board[x][y] == 2) s = "●";
+				if(getBoard()[x][y] == 1) s = "○";
+				if(getBoard()[x][y] == 2) s = "●";
 				System.out.print(s);
 			}
 			System.out.println();
@@ -113,50 +123,98 @@ public class OthelloBoard extends JFrame implements MouseListener {
 			
 			if(x < 8 && y < 8) {
 				
-				if(!ArtificialIntelligence.isPossible(false, new Point(x,y), board)) {
-					System.out.println("can't put.");
+				val cell = Board.getCell(x, y);
+				
+				if(turn == BLACK) {
+					if(!cell.possibleMoveBlack()) {
+						System.out.println("black can't be placed there.");
+						return;
+					}
+					
+					if(!ArtificialIntelligence.isPossible(false, new Point(x,y), getBoard())) {
+						throw new RuntimeException("possibleMoveBlackの判定が間違っている");
+					}
+
+					cell.onMove(false);
+					ArtificialIntelligence.onMove(false, new Point(x,y), getBoard());
+				}
+				else if(turn == WHITE) {
+					if(!cell.possibleMoveWhite()) {
+						System.out.println("white can't be placed there.");
+						return;
+					}
+
+					if(!ArtificialIntelligence.isPossible(true, new Point(x,y), getBoard())) {
+						throw new RuntimeException("possibleMoveWhiteの判定が間違っている");
+					}
+
+					cell.onMove(true);
+				}
+				
+				ArtificialIntelligence.onMove(turn == WHITE, new Point(x,y), getBoard());
+				this.repaint();
+				drawBoard();
+				
+				turn = (turn == BLACK) ? WHITE : BLACK;
+			}
+			else {
+
+				// パスができるかどうかを確認する
+				boolean pass = true;
+				for(y = 0; y < 8; y++) {
+					for(x = 0; x < 8; x++) {
+						val cell = Board.getCell(x, y);
+						
+		 				if(turn == BLACK) {
+		 					if(cell.possibleMoveBlack()) {
+		 						pass = false;
+		 						break;
+		 					}
+						}
+		 				else {
+		 					if(cell.possibleMoveWhite()) {
+		 						pass = false;
+		 						break;
+		 					}
+		 				}
+					}
+				}
+				
+				if(!pass) {
+					System.out.println("パスはできないそうです。置ける場所があると判定されています。");
+					
+					val pts = ArtificialIntelligence.possiblePoints(turn == WHITE, getBoard());
+					if(pts.size() == 0) {
+						System.out.println("（本当は置けない）");
+					}
 					return;
 				}
 				
-				ArtificialIntelligence.onMove(false, new Point(x,y), board);
-				this.repaint();
-				drawBoard();
-				
-				val bk = ArtificialIntelligence.move(true, board);
-				this.repaint();
-				drawBoard();
-				
-				if(bk != null) {
-					ArtificialIntelligence.onMove(true, bk, board);
-					this.repaint();
-					drawBoard();
+				val pts = ArtificialIntelligence.possiblePoints(turn == WHITE, getBoard());
+				if(pts.size() != 0) {
+					System.out.println("置ける場所があるのにパスが認められました。");
 				}
-			}
-			else {
-				val pts = ArtificialIntelligence.possiblePoints(false, board);
-				if(pts.size() == 0) {
-					System.out.println("your pass, ok.");
-					val bk = ArtificialIntelligence.move(true, board);
-					this.repaint();
-					drawBoard();
-					
-					if(bk != null) {
-						ArtificialIntelligence.onMove(true, bk, board);
-						this.repaint();
-						drawBoard();
-					}
+				
+				if(turn == WHITE) {
+					System.out.println("white pass, ok.");
+					turn = BLACK;
+				}
+				else {
+					System.out.println("black pass, ok.");
+					turn = WHITE;
 				}
 			}
 		}
 		
+		// 状況報告
 		{
 			int w = 0, b = 0;
 			for(int y = 0; y < 8; ++y) {
 				for(int x = 0; x < 8; ++x) {
-					if(board[x][y] == WHITE) {
+					if(getBoard()[x][y] == WHITE) {
 						w++;
 					}
-					if(board[x][y] == BLACK) {
+					if(getBoard()[x][y] == BLACK) {
 						b++;
 					}
 				}
