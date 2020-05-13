@@ -1,9 +1,5 @@
 package othello;
 
-import java.awt.Point;
-
-import oresama.ArtificialIntelligence;
-
 public class Cell {
 	
 	private int status = 0;
@@ -11,28 +7,26 @@ public class Cell {
 	private int x, y;
 
 	public Cell(int x, int y) {
-		this.x = x;
-		this.y = y;
 	}
 	
 	public int getX() {
-		return this.x;
+		return 0;
 	}
 	
 	public int getY() {
-		return this.y;
+		return 0;
 	}
 
 	public int getStatus() {
-		return status;
+		return 0;
 	}
 	
 	public boolean possibleMoveBlack() {
-		return ArtificialIntelligence.isPossible(false, new Point(x,y), App.ob.getBoard());
+		return false;
 	}
 
 	public boolean possibleMoveWhite() {
-		return ArtificialIntelligence.isPossible(true, new Point(x,y), App.ob.getBoard());
+		return false;
 	}
 	
 	boolean canFiip(Cell client) {
@@ -40,13 +34,11 @@ public class Cell {
 	}
 
 	public void onMove(boolean white) {
-		this.status = white ? 2:1;
 	}
 
 	public void flip(Cell client, boolean white) {
 	}
 	
 	public void setStatus(int status) {
-		this.status = status;
 	}
 }
