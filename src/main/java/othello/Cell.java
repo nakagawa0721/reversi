@@ -39,8 +39,10 @@ public class Cell {
 					if(x+i < 0 || x+i > 7 || y+z < 0 || y+z > 7) {
 						continue;
 					}
-					if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
-						return true;
+					if(Board.getCell((x+i),(y+z)).status == 2) {
+						if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
+							return true;
+						}
 					}
 				}
 			}
@@ -60,8 +62,10 @@ public class Cell {
 					if(x+i < 0 || x+i > 7 || y+z < 0 || y+z > 7) {
 						continue;
 					}
-					if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
-						return true;
+					if(Board.getCell((x+i),(y+z)).status == 1) {
+						if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
+							return true;
+						}
 					}
 				}
 			}
@@ -90,23 +94,30 @@ public class Cell {
 		if(client.y > this.y) {
 			Y = this.y-1;
 		}
-
+		//自分自身が「なし」の時false
+		if(this.status == 0) {
+			return false;
+		}
+		
+		//呼び出し元が「なし」の時自分自身が引数となりcanFlipを呼び出す
 		if(client.status == 0) {
 			if(X < 0 || X > 7 || Y < 0 || Y > 7 ) {
 				return false;
 			}
 			return Board.getCell(X,Y).canFlip(this);
 		}
-
-		if(client.status != this.status && this.status != 0) {
-			return true;
-		}
-
+		
+		
 		if(client.status == this.status) {
 			if(X < 0 || X > 7 || Y < 0 || Y > 7 ) {
 				return false;
 			}else
 				return Board.getCell(X,Y).canFlip(this);
+		}
+		
+		
+		if(client.status != this.status) {
+			return true;
 		}
 		return false;
 	}
@@ -123,7 +134,6 @@ public class Cell {
 					}
 					if(Board.getCell((x+i),(y+z)).status == 1) {
 						if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
-							
 							Board.getCell((x+i),(y+z)).flip(this,true);
 						}
 					}
@@ -132,7 +142,6 @@ public class Cell {
 			this.status = 2;
 		}
 		else {
-
 			for(int i = -1; i < 2; i++) {
 				for(int z = -1;z < 2; z++ ) {
 					if(i == 0 && z == 0) {
@@ -143,7 +152,6 @@ public class Cell {
 					}
 					if(Board.getCell((x+i),(y+z)).status == 2) {
 						if(Board.getCell((x+i),(y+z)).canFlip(this) == true) {
-							
 							Board.getCell((x+i),(y+z)).flip(this,false);
 						}
 					}
