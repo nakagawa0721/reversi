@@ -4,26 +4,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-class BoardTest{
-	//	public static Cell getCell(int x, int y) {
-	//		return null;
-	//		
-	//	}
+
+class BoardTest {
+
 	@Test
-	void testGetCell() {
-		Cell[][] cells = new Cell[8][8];
-		for(int y =0; y < 8; ++y) {
-			for(int x = 0; x < 8;++x) {
-				cells[x][y] = new Cell(x,y);
-			}
-		}
-		
-		assertEquals(null ,Board.getCell(12, 1));
-		assertEquals(null ,Board.getCell(-1, 1));
-		assertEquals(null ,Board.getCell(12, 11));
-		assertEquals(null ,Board.getCell(-1, -1));
-		assertEquals(null ,Board.getCell(1, 11));
-		assertEquals(null ,Board.getCell(2, -11));
+	// 範囲内の時
+	void testgetCell_1() {
+
+		assertNotNull(Board.getCell(0, 0));
+		assertNotNull(Board.getCell(2, 2));
+		assertNotNull(Board.getCell(7, 7));
+
 	}
-	
+	@Test
+	// 範囲外の時
+	void testgetCell_2() {
+		assertNull(Board.getCell(8, 8));
+		assertNull(Board.getCell(10, 10));
+		assertNull(Board.getCell(-1, -1));
+		assertNull(Board.getCell(-10, -10));
+
+	}
+
 }

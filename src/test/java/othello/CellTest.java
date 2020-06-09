@@ -4,252 +4,265 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-class CellTest{
+import oresama.OthelloBoard;
 
-	Cell errtest2 = new Cell(-1,8);
-	Cell cell = new Cell(5, 4);
-	public void initialize() {
-		for(int x = 0; x < 8; ++x) {
-			for(int y = 0; y < 8; ++y) {
+class CellTest {
+
+	Cell cell = new Cell(-1,7);
+
+	// 初期値
+	public void init() {
+		for (int x = 0; x < 8; x++) {
+			for(int y = 0; y < 8; y++) {
 				Board.getCell(x, y).setStatus(0);
 			}
 		}
-		Board.getCell(3, 4).setStatus(2);
-		Board.getCell(4, 3).setStatus(2);
 		Board.getCell(3, 3).setStatus(1);
 		Board.getCell(4, 4).setStatus(1);
+		Board.getCell(4, 3).setStatus(2);
+		Board.getCell(3, 4).setStatus(2);
+
 	}
-	
-	
+
 	@Test
 	void testCell() {
-		initialize();
-		assertEquals(null,Board.getCell(-1, 8));
-		assertEquals(null,Board.getCell(8, -1));		
+
+		init();
+
+		// 範囲外の時、nullを返却する
+		assertNull(Board.getCell(0, 8));
+		assertNull(Board.getCell(7, -2));
 	}
 
 	@Test
 	void testGetX() {
-		//セットしたXの値がとれているか
-		assertEquals(5,cell.getX());
-		assertEquals(0,errtest2.getX());
+
+		init();
+
+		// xの値を取得する
+		assertEquals(3, Board.getCell(3, 3).getX());
+		assertEquals(4, Board.getCell(4, 4).getX());
 	}
 
 	@Test
 	void testGetY() {
-		//セットしたYの値がとれているか
-		assertEquals(4,cell.getY());
-		assertEquals(0,errtest2.getX());
+
+		init();
+
+		// yの値を取得する
+		assertEquals(4, Board.getCell(3, 4).getY());
+		assertEquals(3, Board.getCell(4, 3).getY());
 	}
 
 	@Test
 	void testGetStatus() {
-		//ステータスをとれているか
-		//ステータスが0の時
-		assertEquals(0,cell.getStatus());
-		//ステータスが1の時
-		cell.setStatus(1);
-		assertEquals(1,cell.getStatus());
-		//ステータスが2の時
-		cell.setStatus(2);
-		assertEquals(2,cell.getStatus());
+
+		init();
+		//現在のステータスが0の時
+		assertEquals(0, Board.getCell(1, 1).getStatus());
+		//現在のステータスが1の時
+		assertEquals(1, Board.getCell(3, 3).getStatus());
+		assertEquals(1, Board.getCell(4, 4).getStatus());
+		//現在のステータスが2の時
+		assertEquals(2, Board.getCell(3, 4).getStatus());
+		assertEquals(2, Board.getCell(4, 3).getStatus());
 	}
 
 	@Test
-	void testPossibleMoveBlack() {
-		initialize();
-		//左から右に置けるか
-		assertEquals(true,Board.getCell(2, 4).possibleMoveBlack());
-		//左から右に置けないか
-		assertEquals(false,Board.getCell(2, 3).possibleMoveBlack());
-		
-		//下から上に置けるか
-		assertEquals(true,Board.getCell(3, 5).possibleMoveBlack());
-		//下から上に置けないか
-		assertEquals(false,Board.getCell(4, 5).possibleMoveBlack());
-		
-		//上から下に置けるか
-		assertEquals(true,Board.getCell(4, 2).possibleMoveBlack());
-		//上から下に置けないか
-		assertEquals(false,Board.getCell(3, 2).possibleMoveBlack());
-		
-		//右から左に置けるか
-		assertEquals(true,Board.getCell(5, 3).possibleMoveBlack());
-		//右から左に置けないか
-		assertEquals(false,Board.getCell(5, 4).possibleMoveBlack());
-		
-		//左下から右上に置けるか
-		Board.getCell(5, 2).setStatus(1);
-		assertEquals(true,Board.getCell(2, 5).possibleMoveBlack());
-		//右上から左下に置けないか
-		assertEquals(false,Board.getCell(3, 4).possibleMoveBlack());
-		
-		//右下から左上に置けるか
-		Board.getCell(3, 2).setStatus(1);
-		assertEquals(true,Board.getCell(5, 4).possibleMoveBlack());
-		//左上から右下に置けないか
-		assertEquals(false,Board.getCell(2, 1).possibleMoveBlack());
-		
-		//左上から右下に置けるか
-		Board.getCell(4, 5).setStatus(1);
-		assertEquals(true,Board.getCell(2, 3).possibleMoveBlack());
-		//右下から左上に置けないか
-		assertEquals(false,Board.getCell(5, 6).possibleMoveBlack());
-		
-		//右上から左下に置けるか
-		Board.getCell(4, 1).setStatus(2);
-		assertEquals(true,Board.getCell(5, 0).possibleMoveBlack());
-		//左下から右上に置けないか
-		assertEquals(false,Board.getCell(3, 6).possibleMoveBlack());
-		
-		//ステータスが0以外の時false
-		assertEquals(false,Board.getCell(4, 1).possibleMoveBlack());
-		
-		//端の時存在しないCellに対して continue をするか
-		Board.getCell(0, 7).setStatus(0);
-		Board.getCell(7, 0).setStatus(0);
-		assertEquals(false,Board.getCell(0, 7).possibleMoveBlack());
-		assertEquals(false,Board.getCell(7, 0).possibleMoveBlack());
-	}
+	void TestPossibleMoveBlack() {
 
-	@Test
-	void testPossibleMoveWhite() {
-		initialize();
-		//左から右に置けないか
-		assertEquals(false,Board.getCell(2, 4).possibleMoveWhite());
-		//左から右に置けるか
-		assertEquals(true,Board.getCell(2, 3).possibleMoveWhite());
-		
-		//下から上に置けないか
-		assertEquals(false,Board.getCell(3, 5).possibleMoveWhite());
-		//下から上に置けるか
-		assertEquals(true,Board.getCell(4, 5).possibleMoveWhite());
-		
-		//上から下に置けないか
-		assertEquals(false,Board.getCell(4, 2).possibleMoveWhite());
-		//上から下に置けるか
-		assertEquals(true,Board.getCell(3, 2).possibleMoveWhite());
-		
-		//右から左に置けないか
-		assertEquals(false,Board.getCell(5, 3).possibleMoveWhite());
-		//右から左に置けるか
-		assertEquals(true,Board.getCell(5, 4).possibleMoveWhite());
-		
-		//左上から右下に置けないか
-		Board.getCell(2, 2).setStatus(2);
-		assertEquals(false,Board.getCell(1, 1).possibleMoveWhite());
-		//右下から左上に置けるか
-		assertEquals(true,Board.getCell(5, 5).possibleMoveWhite());
+		init();
 
-		//右上から左下に置けないか
-		Board.getCell(4, 2).setStatus(2);
-		assertEquals(false,Board.getCell(5, 1).possibleMoveWhite());
-		//左下から右上に置けるか
-		assertEquals(true,Board.getCell(2, 4).possibleMoveWhite());
-		
-		//左下から右上に置けないか
-		Board.getCell(3, 5).setStatus(2);
-		assertEquals(false,Board.getCell(2, 5).possibleMoveWhite());
-		//右上から左下に置けるか
-		assertEquals(true,Board.getCell(5, 3).possibleMoveWhite());
-		
-		//右下から左上に置けないか
-		Board.getCell(3, 1).setStatus(1);
-		assertEquals(false,Board.getCell(2, 5).possibleMoveWhite());
-		//左上から右下に置けるか
-		assertEquals(true,Board.getCell(2, 0).possibleMoveWhite());
-		
-		//ステータスが0以外の時false
-		assertEquals(false,Board.getCell(3, 1).possibleMoveWhite());
-		
-		//端の時存在しないCellに対して continue をするか
-		Board.getCell(0, 7).setStatus(0);
-		Board.getCell(7, 0).setStatus(0);
-		assertEquals(false,Board.getCell(0, 7).possibleMoveWhite());
-		assertEquals(false,Board.getCell(7, 0).possibleMoveWhite());
+		// 黒がすでにある時、falseを返す
+		assertEquals(false, Board.getCell(3, 3).possibleMoveBlack());
+		assertEquals(false, Board.getCell(4, 4).possibleMoveBlack());
+		// 白がすでにある時、falseを返す
+		assertEquals(false, Board.getCell(3, 4).possibleMoveBlack());
+		assertEquals(false, Board.getCell(4, 3).possibleMoveBlack());
+
+
+		// 白を挟んで置くとき、trueを返す
+		assertEquals(true, Board.getCell(2, 4).possibleMoveBlack());
+		assertEquals(true, Board.getCell(3, 5).possibleMoveBlack());
+		assertEquals(true, Board.getCell(4, 2).possibleMoveBlack());
+		assertEquals(true, Board.getCell(5, 3).possibleMoveBlack());
+
+		// 白を挟めないところに置くとき、falseを返す
+		assertEquals(false, Board.getCell(2, 2).possibleMoveBlack());
+		assertEquals(false, Board.getCell(2, 3).possibleMoveBlack());
+		assertEquals(false, Board.getCell(2, 5).possibleMoveBlack());
+		assertEquals(false, Board.getCell(3, 2).possibleMoveBlack());
+		assertEquals(false, Board.getCell(4, 5).possibleMoveBlack());
+		assertEquals(false, Board.getCell(5, 2).possibleMoveBlack());
+		assertEquals(false, Board.getCell(5, 4).possibleMoveBlack());
+		assertEquals(false, Board.getCell(5, 5).possibleMoveBlack());
+
+		// cellが対象範囲外の時、continueする
+		assertEquals(false, Board.getCell(7, 7).possibleMoveBlack());
 
 	}
 
 	@Test
-	void testCanFlip() {
-		//黒を置いたとき白が黒になる箇所があるかの確認
-		initialize();
-		Board.getCell(2, 2).setStatus(2);
-		Board.getCell(5, 5).setStatus(2);
+	void TestPossibleMoveWhite() {
 
-		assertEquals(true,Board.getCell(3, 4).canFlip(Board.getCell(2, 4)));
-		assertEquals(true,Board.getCell(3, 4).canFlip(Board.getCell(3, 5)));
-		assertEquals(true,Board.getCell(4, 3).canFlip(Board.getCell(4, 2)));
-		assertEquals(true,Board.getCell(4, 3).canFlip(Board.getCell(5, 3)));
-		
-		assertEquals(true,Board.getCell(2, 2).canFlip(Board.getCell(1, 1)));
-		assertEquals(true,Board.getCell(5, 5).canFlip(Board.getCell(6, 6)));
-		
-		//白を置いたとき黒が白になる箇所があるかの確認
-		Board.getCell(5, 2).setStatus(1);
-		Board.getCell(2, 5).setStatus(1);
-		
-		assertEquals(true,Board.getCell(3, 3).canFlip(Board.getCell(2, 3)));
-		assertEquals(true,Board.getCell(3, 3).canFlip(Board.getCell(3, 2)));
-		assertEquals(true,Board.getCell(4, 4).canFlip(Board.getCell(4, 5)));
-		assertEquals(true,Board.getCell(4, 4).canFlip(Board.getCell(5, 4)));
-		
-		assertEquals(true,Board.getCell(5, 2).canFlip(Board.getCell(6, 1)));
-		assertEquals(true,Board.getCell(2, 5).canFlip(Board.getCell(1, 6)));
-		
-		//呼び出し元が「なし」の時自分自身が引数となりcanFlipを呼び出す
-		Board.getCell(0, 7).setStatus(1);
-		assertEquals(false,Board.getCell(0, 7).canFlip(Board.getCell(1, 6)));
-		
-		Board.getCell(1, 6).setStatus(1);
-		assertEquals(false,Board.getCell(0, 7).canFlip(Board.getCell(1, 6)));
+		init();
+
+		// 黒がすでにある時、falseを返す
+		assertEquals(false, Board.getCell(3, 3).possibleMoveWhite());
+		assertEquals(false, Board.getCell(4, 4).possibleMoveWhite());
+		// 白がすでにある時、falseを返す
+		assertEquals(false, Board.getCell(3, 4).possibleMoveWhite());
+		assertEquals(false, Board.getCell(4, 3).possibleMoveWhite());
+
+
+		// 黒を挟んで置くとき、trueを返す
+		assertEquals(true, Board.getCell(2, 3).possibleMoveWhite());
+		assertEquals(true, Board.getCell(3, 2).possibleMoveWhite());
+		assertEquals(true, Board.getCell(4, 5).possibleMoveWhite());
+		assertEquals(true, Board.getCell(5, 4).possibleMoveWhite());
+
+		// 黒を挟めないところに置くとき、falseを返す
+		assertEquals(false, Board.getCell(2, 2).possibleMoveWhite());
+		assertEquals(false, Board.getCell(2, 4).possibleMoveWhite());
+		assertEquals(false, Board.getCell(2, 5).possibleMoveWhite());
+		assertEquals(false, Board.getCell(3, 5).possibleMoveWhite());
+		assertEquals(false, Board.getCell(4, 2).possibleMoveWhite());
+		assertEquals(false, Board.getCell(5, 2).possibleMoveWhite());
+		assertEquals(false, Board.getCell(5, 3).possibleMoveWhite());
+		assertEquals(false, Board.getCell(5, 5).possibleMoveWhite());
+
+		// 次のcellが対象範囲外の時、continueを実行する
+		assertEquals(false, Board.getCell(7, 7).possibleMoveWhite());
+
+	}
+
+	@Test
+	void testCanFiip() {
+
+		init();
+
+		//現在のステータスが0の時にfalseを返す
+		assertEquals(false,Board.getCell(1, 1).canFiip(Board.getCell(2, 1)));
+
+		// 次のセルが存在しないときにfalseを返す
+		assertEquals(false,Board.getCell(3, 4).canFiip(Board.getCell(3, 4)));
+
+
+		// 黒を置いた時に、白が黒になるならtrueを返す
+		assertEquals(true, Board.getCell(3, 4).canFiip(Board.getCell(2, 4)));
+		assertEquals(true, Board.getCell(3, 4).canFiip(Board.getCell(3, 5)));
+		assertEquals(true, Board.getCell(4, 3).canFiip(Board.getCell(4, 2)));
+		assertEquals(true, Board.getCell(4, 3).canFiip(Board.getCell(5, 3)));
+
+		// 白を置いた時に、黒が白になるならtrueを返す
+		assertEquals(true, Board.getCell(3, 3).canFiip(Board.getCell(3, 2)));
+		assertEquals(true, Board.getCell(3, 3).canFiip(Board.getCell(2, 3)));
+		assertEquals(true, Board.getCell(4, 4).canFiip(Board.getCell(4, 5)));
+		assertEquals(true, Board.getCell(4, 4).canFiip(Board.getCell(5, 4)));
+
+
+		// 次のセルが範囲外の時に,falseを返す
+		Board.getCell(0, 0).setStatus(OthelloBoard.BLACK);
+		assertEquals(false, Board.getCell(0, 0).canFiip(Board.getCell(1, 1)));
+
+		// 次のセルが範囲外かつ、呼び出し元と現在のステータスが同じとき
+		Board.getCell(1, 1).setStatus(OthelloBoard.BLACK);
+		assertEquals(false, Board.getCell(0, 0).canFiip(Board.getCell(1, 1)));
+
+		// (3,5)に白色セルをセット
+		Board.getCell(3, 5).setStatus(OthelloBoard.WHITE);
+		// (3,6)に黒セルをセットすると、trueを返却するか
+		assertEquals(true, Board.getCell(3, 5).canFiip(Board.getCell(3, 6)));
+
+
 	}
 
 	@Test
 	void testOnMove() {
-		
-		initialize();
-		Board.getCell(4, 4).onMove(false);
-		assertEquals(1,Board.getCell(4, 4).getStatus());
-		Board.getCell(4, 4).onMove(true);
-		
-		initialize();
-		Board.getCell(3, 4).onMove(true);
-		assertEquals(2,Board.getCell(3, 4).getStatus());
-		Board.getCell(3, 4).onMove(false);
-		
-		Board.getCell(0, 7).onMove(true);
-		assertEquals(2,Board.getCell(0, 7).getStatus());
-		Board.getCell(0, 7).onMove(false);
-		assertEquals(1,Board.getCell(0, 7).getStatus());	
+		init();
+
+		// 黒を白に変更できているか
+		Board.getCell(3, 2).setStatus(OthelloBoard.WHITE);
+		Board.getCell(3, 2).onMove(true);
+		assertEquals(OthelloBoard.WHITE, Board.getCell(3, 3).getStatus());
+		Board.getCell(4, 5).setStatus(OthelloBoard.WHITE);
+		Board.getCell(4, 5).onMove(true);
+		assertEquals(OthelloBoard.WHITE, Board.getCell(4, 4).getStatus());
+
+		// 初期値
+		init();
+
+		// 	白を黒に変更できるか
+		Board.getCell(2, 4).setStatus(OthelloBoard.BLACK);
+		Board.getCell(2, 4).onMove(false);
+		assertEquals(OthelloBoard.BLACK, Board.getCell(3, 4).getStatus());
+		Board.getCell(4, 2).setStatus(OthelloBoard.BLACK);
+		Board.getCell(4, 2).onMove(false);
+		assertEquals(OthelloBoard.BLACK, Board.getCell(4, 3).getStatus());
+
+		// 次のcellが範囲外の時、continueを実行する(falseの場合)
+		Board.getCell(7, 7).setStatus(OthelloBoard.BLACK);
+		Board.getCell(7, 6).setStatus(OthelloBoard.WHITE);
+		Board.getCell(7, 5).setStatus(OthelloBoard.BLACK);
+		Board.getCell(7, 7).onMove(false);
+		assertEquals(OthelloBoard.BLACK, Board.getCell(7, 6).getStatus());
+
+		// 元に戻す
+		init();
+
+		// 次のcellが範囲外の時、continueを実行する(trueの場合)
+		Board.getCell(7, 7).setStatus(OthelloBoard.WHITE);
+		Board.getCell(7, 6).setStatus(OthelloBoard.BLACK);
+		Board.getCell(7, 5).setStatus(OthelloBoard.WHITE);
+		Board.getCell(7, 7).onMove(true);
+		assertEquals(OthelloBoard.WHITE, Board.getCell(7, 6).getStatus());
+
 	}
 
 	@Test
-	void testFlipWhite() {
-		initialize();
+	void testFlip() {
 
-		Board.getCell(4, 4).flip(Board.getCell(4, 3), true);
-		Board.getCell(3, 3).flip(Board.getCell(3, 4), true);
-		Board.getCell(3, 3).flip(Board.getCell(4, 4), true);
-		Board.getCell(3, 3).flip(Board.getCell(4, 3), true);
-		Board.getCell(3, 3).flip(Board.getCell(2, 2), false);
+		init();
+
+		// 白を黒に変更できるか
+		Board.getCell(3, 4).flip(Board.getCell(3, 5), false);
+		assertEquals(OthelloBoard.BLACK , Board.getCell(3, 4).getStatus());
+		Board.getCell(4, 3).flip(Board.getCell(5, 3), false);
+		assertEquals(OthelloBoard.BLACK , Board.getCell(4, 3).getStatus());
+
+		init();
+
+		// 黒を白に変更できるか
+		Board.getCell(3, 3).flip(Board.getCell(2, 3), true);
+		assertEquals(OthelloBoard.WHITE , Board.getCell(3, 3).getStatus());
+		Board.getCell(4, 4).flip(Board.getCell(5, 4), true);
+		assertEquals(OthelloBoard.WHITE , Board.getCell(4, 4).getStatus());
+
+
+		// 次のcellが範囲外の時、例外発生する(falseの場合)
+		Board.getCell(0, 0).setStatus(OthelloBoard.WHITE);
+		assertThrows(RuntimeException.class, () -> Board.getCell(0, 0).flip(Board.getCell(1, 1), false));
+
+		// 次のcellが範囲外の時、例外発生する(trueの場合)
+		Board.getCell(0, 0).setStatus(OthelloBoard.BLACK);
+		assertThrows(RuntimeException.class, () -> Board.getCell(0, 0).flip(Board.getCell(1, 1), true));
+
 	}
-	
-	@Test
-	void testFlipBlack() {
-		initialize();
-		
-		Board.getCell(3, 4).flip(Board.getCell(4, 4), false);
-		Board.getCell(3, 4).flip(Board.getCell(3, 4), false);
-		Board.getCell(4, 3).flip(Board.getCell(4, 4), false);
-		Board.getCell(4, 3).flip(Board.getCell(3, 4), false);
-		Board.getCell(4, 3).flip(Board.getCell(3, 3), false);
-		Board.getCell(4, 3).flip(Board.getCell(2, 2), true);
-	}
+
 	@Test
 	void testSetStatus() {
-		cell.setStatus(1);
-		assertEquals(1,cell.getStatus());
+
+		init();
+
+		// 黒をセットできるか
+		 Board.getCell(1, 1).setStatus(OthelloBoard.BLACK);
+		 assertEquals(OthelloBoard.BLACK, Board.getCell(1, 1).getStatus());
+
+		 // 白をセットできるか
+		 Board.getCell(6, 6).setStatus(OthelloBoard.WHITE);
+		 assertEquals(OthelloBoard.WHITE, Board.getCell(6, 6).getStatus());
+
+
 	}
 
 }

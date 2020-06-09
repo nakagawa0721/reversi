@@ -17,7 +17,7 @@ import othello.Board;
 @SuppressWarnings("serial")
 public class OthelloBoard extends JFrame implements MouseListener {
 
-	static int NONE = 0, BLACK = 1, WHITE = 2;
+	public static int NONE = 0, BLACK = 1, WHITE = 2;
 
 	public int[][] getBoard() {
 		int board[][] = new int[8][8];
@@ -28,7 +28,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		}
 		return board;
 	}
-	
+
 	private int turn = BLACK;
 
 	public OthelloBoard() {
@@ -38,7 +38,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		Board.getCell(4, 4).setStatus(BLACK);
 		Board.getCell(4, 3).setStatus(WHITE);
 		Board.getCell(3, 4).setStatus(WHITE);
-		
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setIconImage(new ImageIcon("./icon.png").getImage());
 		setTitle("REVERSI");
@@ -46,7 +46,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		val width = 600 + insets.left + insets.right;
 		val height = 400 + insets.top + insets.bottom;
 		setSize(width, height);
-		
+
 		addMouseListener(this);
 
 		setVisible(true);
@@ -95,7 +95,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 
 		g.dispose();
 	}
-	
+
 	private void drawBoard() {
 		for(int y = 0; y < 8; ++y) {
 			for(int x = 0; x < 8; ++x) {
@@ -114,23 +114,23 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		val insets = getInsets();
 
 		val pt = e.getPoint();
-		
+
 		{
 			int x = pt.x / 40;
 			int y = (pt.y - insets.top) / 40;
-			
+
 			System.out.println("x=" + x + ", y=" + y);
-			
+
 			if(x < 8 && y < 8) {
-				
+
 				val cell = Board.getCell(x, y);
-				
+
 				if(turn == BLACK) {
 					if(!cell.possibleMoveBlack()) {
 						System.out.println("black can't be placed there.");
 						return;
 					}
-					
+
 					if(!ArtificialIntelligence.isPossible(false, new Point(x,y), getBoard())) {
 						throw new RuntimeException("possibleMoveBlackの判定が間違っている");
 					}
@@ -150,11 +150,11 @@ public class OthelloBoard extends JFrame implements MouseListener {
 
 					cell.onMove(true);
 				}
-				
+
 				ArtificialIntelligence.onMove(turn == WHITE, new Point(x,y), getBoard());
 				this.repaint();
 				drawBoard();
-				
+
 				turn = (turn == BLACK) ? WHITE : BLACK;
 			}
 			else {
@@ -164,7 +164,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 				for(y = 0; y < 8; y++) {
 					for(x = 0; x < 8; x++) {
 						val cell = Board.getCell(x, y);
-						
+
 		 				if(turn == BLACK) {
 		 					if(cell.possibleMoveBlack()) {
 		 						pass = false;
@@ -179,22 +179,22 @@ public class OthelloBoard extends JFrame implements MouseListener {
 		 				}
 					}
 				}
-				
+
 				if(!pass) {
 					System.out.println("パスはできないそうです。置ける場所があると判定されています。");
-					
+
 					val pts = ArtificialIntelligence.possiblePoints(turn == WHITE, getBoard());
 					if(pts.size() == 0) {
 						System.out.println("（本当は置けない）");
 					}
 					return;
 				}
-				
+
 				val pts = ArtificialIntelligence.possiblePoints(turn == WHITE, getBoard());
 				if(pts.size() != 0) {
 					System.out.println("置ける場所があるのにパスが認められました。");
 				}
-				
+
 				if(turn == WHITE) {
 					System.out.println("white pass, ok.");
 					turn = BLACK;
@@ -205,7 +205,7 @@ public class OthelloBoard extends JFrame implements MouseListener {
 				}
 			}
 		}
-		
+
 		// 状況報告
 		{
 			int w = 0, b = 0;
@@ -226,24 +226,24 @@ public class OthelloBoard extends JFrame implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
